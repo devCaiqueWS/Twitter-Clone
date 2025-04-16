@@ -1,0 +1,29 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model tweet {
+  id        Int      @id @default(autoincrement())
+  content   String   @db.Text
+  createdAt DateTime @default(now()) @db.Timestamp(0)
+  userId    Int
+  user      user     @relation(fields: [userId], references: [id], onDelete: Cascade, map: "fk_user")
+
+  @@index([userId], map: "fk_user")
+}
+
+model user {
+  id       Int     @id @default(autoincrement())
+  username String  @unique(map: "username") @db.VarChar(255)
+  email    String  @unique(map: "email") @db.VarChar(255)
+  usertag  String? @db.VarChar(50)
+  telefone String? @db.VarChar(20)
+  senha    String? @db.Char(32)
+  imageUrl String? @db.VarChar(255)
+  tweet    tweet[]
+}
